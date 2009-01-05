@@ -1,20 +1,12 @@
 package Gentoo::Category;
 
 use Moose;
-use Moose::Util::TypeConstraints;
+
 use Gentoo::Util::Iterator;
+use Gentoo::Package;
+use Gentoo::Types;
 
 extends qw( Gentoo::Base );
-
-#use Scalar::Util qw/refaddr/;
-
-subtype 'CategoryAtom' => (
-    as 'Str',
-    where { $_ =~ /^[-a-z0-9]+$/ },
-    message {
-        "$_ is not a valid Category Atom.";
-    },
-);
 
 has 'repository' => (
     isa      => 'Gentoo::Repository',
@@ -23,10 +15,9 @@ has 'repository' => (
 );
 
 has 'category_name' => (
-    isa      => 'CategoryAtom',
+    isa      => 'Gentoo::Type::CategoryAtom',
     is       => 'rw',
     required => 1,
-    coerce   => 1,
 );
 
 sub packages {
@@ -43,7 +34,10 @@ sub packages {
                 next if !-d $d;
                 $d =~ s{^\Q$self->{'repository'}->{'directory'}\E}{};
                 $d =~ s{^\Q$self->{'category_name'}\E/}{};
-                return $d;
+                return Gentoo::Package->new(
+                    category     => $self,
+                    package_name => $d
+                );
             }
             return;
         }

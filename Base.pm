@@ -2,10 +2,10 @@ package Gentoo::Base;
 use Moose;
 use overload '""' => \&yaml;
 
-sub yaml { 
+sub yaml {
     my ($self) = shift;
-    require YAML;
-    return YAML::Dump($self);   
+    eval 'use YAML::XS';
+    return YAML::XS::Dump($self);
 }
 
-1; 
+1;
