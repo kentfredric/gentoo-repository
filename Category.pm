@@ -20,28 +20,28 @@ has 'category_name' => (
     required => 1,
 );
 
-sub packages {
-    my ($self) = shift;
-    my (@dirs);
-    @dirs =
-      glob( $self->{repository}->{directory} . $self->{category_name} . '/*' );
-    @dirs = sort @dirs;
-    my $iterator = 0;
+sub remove_base {
+    my ( $self ) = shift;
+    return $self->_remove_base( $self->category_name .'/' , @_ );
+}
 
-    return Gentoo::Util::Iterator->new(
-        sub {
-            while ( my $d = $dirs[ $iterator++ ] ) {
-                next if !-d $d;
-                $d =~ s{^\Q$self->{'repository'}->{'directory'}\E}{};
-                $d =~ s{^\Q$self->{'category_name'}\E/}{};
-                return Gentoo::Package->new(
-                    category     => $self,
-                    package_name => $d
-                );
-            }
-            return;
+sub packages {
+    my ( $self, $iterator, $next, @dirs ) = ( (shift), 0, undef, undef );
+    @dirs = glob( $self->repository->directory . $self->category_name . '/*' );
+    @dirs = sort @dirs;
+    $next = sub {
+        while ( my $d = $dirs[ $iterator++ ] ) {
+            next if !-d $d;
+            $d = $self->repository->remove_base($d);
+            $d = $self->remove_base($d);
+            return Gentoo::Package->new(
+                category     => $self,
+                package_name => $d
+            );
         }
-    );
+        return;
+    };
+    return Gentoo::Util::Iterator->new($next);
 }
 
 1;

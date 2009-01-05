@@ -19,19 +19,15 @@ has 'directory' => (
 =cut
 
 sub remove_base {
-    my ( $self, $url ) = splice @_, 0, 2;
-    my $urn  = $url;
-    my $base = $self->directory;
-    $urn =~ s/^\Q$base\E//;
-    return $urn;
+    my ($self) = shift;
+    return $self->_remove_base( $self->directory, @_ );
 }
 
 sub categories {
-    my ($self) = shift;
-    my (@dirs) = glob( $self->directory . '*' );
+    my ( $self, $iterator, $next, @dirs ) = ( (shift), 0, undef, undef );
+    @dirs = glob( $self->directory . '*' );
     @dirs = sort @dirs;
-    my $iterator = 0;
-    my $next     = sub {
+    $next = sub {
         while ( my $d = $dirs[ $iterator++ ] ) {
             my $short = $self->remove_base($d);
             next if _is_metafile($short);
