@@ -1,6 +1,6 @@
 package Gentoo::Base;
 use Moose;
-use overload '""' => \&yaml;
+#use overload '""' => \&yaml;
 
 sub yaml {
     my ($self) = shift;
