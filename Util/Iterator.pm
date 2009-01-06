@@ -1,6 +1,9 @@
 package Gentoo::Util::Iterator;
+
+#$Id$
 use strict;
 use warnings;
+use version; our $VERSION = qv('0.1');
 use boolean qw( isFalse isTrue false true );
 
 sub new {
@@ -19,19 +22,16 @@ sub new {
     return $x;
 }
 
-sub next {
-    my ($self) = shift;
-    
+sub next_item {
+    my ( $self, @rest ) = @_;
+
     if ( isFalse $self->{'started'} ) {
         $self->{'started'} = true;
     }
-    
-    if ( isTrue $self->{'finished'} ){
+    if ( isTrue $self->{'finished'} ) {
         return;
     }
-    
-    my $item = $self->{'next'}->( $self, @_ );
-    
+    my $item = $self->{'next'}->( $self, @rest );
     if ( defined $item ) {
         $self->{'current'} = $item;
         push @{ $self->{'seen'} }, $item;
@@ -45,18 +45,18 @@ sub next {
 
 sub current {
     my ($self) = shift;
-    if( isFalse $self->{'started'}){
-        $self->next();
+    if ( isFalse $self->{'started'} ) {
+        $self->next_item();
     }
     return $self->{'current'};
 }
 
 sub all {
     my ($self) = shift;
-    while( isFalse $self->{'finished'} ){
-        $self->next();
+    while ( isFalse $self->{'finished'} ) {
+        $self->next_item();
     }
-    return @{$self->{'seen'}};
+    return @{ $self->{'seen'} };
 }
 
 1;

@@ -1,6 +1,9 @@
 package Gentoo::Category;
 
+# $Id:$
+
 use Moose;
+use version; our $VERSION = qv('0.1');
 
 use Gentoo::Util::Iterator;
 use Gentoo::Package;
@@ -20,23 +23,21 @@ has 'category_name' => (
     required => 1,
 );
 
-sub remove_base {
-    my ( $self ) = shift;
-    return $self->_remove_base( $self->category_name .'/' , @_ );
+sub url {
+    my ($self) = shift;
+    return $self->repository->url . $self->category_name . q{/};
 }
 
 sub packages {
     my ( $self, $iterator, $next, @dirs ) = ( (shift), 0, undef, undef );
-    @dirs = glob( $self->repository->directory . $self->category_name . '/*' );
-    @dirs = sort @dirs;
+    @dirs = sort $self->glob_url;
     $next = sub {
         while ( my $d = $dirs[ $iterator++ ] ) {
             next if !-d $d;
-            $d = $self->repository->remove_base($d);
-            $d = $self->remove_base($d);
+
             return Gentoo::Package->new(
                 category     => $self,
-                package_name => $d
+                package_name => $self->remove_base($d)
             );
         }
         return;
