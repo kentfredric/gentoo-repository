@@ -1,0 +1,26 @@
+---
+abstract: 'Utilities for Using/Traversing Gentoo Repositories'
+author:
+  - 'Kent Fredric <kentfredric@gmail.com>'
+distribution_type: module
+generated_by: 'Module::Install version 0.77'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Gentoo-Repository
+no_index:
+  directory:
+    - inc
+requires:
+  Moose: 0.63
+  Moose::Util::TypeConstraints: 0.63
+  MooseX::Method::Signatures: 0.06
+  Readonly: 1.03
+  YAML::XS: 0.29
+  boolean: 0.2
+  perl: 5.01
+  version: 0.76
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.1
