@@ -35,8 +35,7 @@ method url {
 	return $self->directory;
 };
 
-method categories( CodeRef : $filter
-	? ) {
+method categories( CodeRef :$filter? ) {
 	my ( $iterator, $next, @dirs ) = ( 0, undef, undef );
 	  @dirs = $self->glob_url;
 	  $next = sub {

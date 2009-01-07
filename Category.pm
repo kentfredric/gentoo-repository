@@ -28,7 +28,7 @@ method url {
 	return $self->repository->url . $self->category_name . q{/};
 };
 
-method packages( CodeRef : $filter ? ) {
+method packages( CodeRef :$filter? ) {
 	my ( $iterator, $next, @dirs ) = ( 0, undef, undef );
 	  @dirs = $self->glob_url;
 	  $next = sub {
