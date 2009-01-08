@@ -12,6 +12,7 @@ name: Gentoo-Repository
 no_index:
   directory:
     - inc
+    - t
 requires:
   Moose: 0.63
   Moose::Util::TypeConstraints: 0.63
