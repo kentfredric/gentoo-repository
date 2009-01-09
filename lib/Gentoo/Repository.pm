@@ -8,12 +8,12 @@ use MooseX::Method::Signatures;
 use version; our $VERSION = qv('0.1');
 
 use Gentoo::Util::Iterator;
-use Gentoo::Category;
-use Gentoo::Types;
+use Gentoo::Repository::Category;
+use Gentoo::Repository::Types;
 
 use Readonly;
 
-extends qw( Gentoo::Base );
+extends qw( Gentoo::Repository::Base );
 
 Readonly my %SPECIALS => (
 	distfiles => 1,
@@ -26,7 +26,7 @@ Readonly my %SPECIALS => (
 );
 
 has 'directory' => (
-	isa      => 'Gentoo::Type::Directory',
+	isa      => 'Gentoo::Repository::Type::Directory',
 	is       => 'rw',
 	required => 1,
 );
@@ -47,7 +47,7 @@ method categories( CodeRef :$filter? ) {
 			}
 			next if __PACKAGE__->_filter_metafile($short);
 			next if !-d $d;
-			return Gentoo::Category->new(
+			return Gentoo::Repository::Category->new(
 				repository    => $self,
 				category_name => $short,
 			);

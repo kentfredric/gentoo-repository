@@ -1,4 +1,4 @@
-package Gentoo::Base;
+package Gentoo::Repository::Base;
 
 #$Id:$
 use Moose;

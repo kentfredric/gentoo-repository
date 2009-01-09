@@ -1,20 +1,20 @@
-package Gentoo::Package;
+package Gentoo::Repository::Package;
 
 #$Id:$
 use Moose;
 use version; our $VERSION = qv('0.1');
-use Gentoo::Types;
+use Gentoo::Repository::Types;
 use MooseX::Method::Signatures 0.06;
-extends qw( Gentoo::Base );
+extends qw( Gentoo::Repository::Base );
 
 has 'category' => (
-	isa      => 'Gentoo::Category',
+	isa      => 'Gentoo::Repository::Category',
 	is       => 'rw',
 	required => 1,
 );
 
 has 'package_name' => (
-	isa      => 'Gentoo::Type::PackageAtom',
+	isa      => 'Gentoo::Repository::Type::PackageAtom',
 	is       => 'rw',
 	required => 1,
 );

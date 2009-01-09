@@ -1,4 +1,4 @@
-package Gentoo::Category;
+package Gentoo::Repository::Category;
 
 # $Id:$
 
@@ -7,10 +7,10 @@ use version; our $VERSION = qv('0.1');
 use MooseX::Method::Signatures 0.06;
 
 use Gentoo::Util::Iterator;
-use Gentoo::Package;
-use Gentoo::Types;
+use Gentoo::Repository::Package;
+use Gentoo::Repository::Types;
 
-extends qw( Gentoo::Base );
+extends qw( Gentoo::Repository::Base );
 
 has 'repository' => (
 	isa      => 'Gentoo::Repository',
@@ -19,7 +19,7 @@ has 'repository' => (
 );
 
 has 'category_name' => (
-	isa      => 'Gentoo::Type::CategoryAtom',
+	isa      => 'Gentoo::Repository::Type::CategoryAtom',
 	is       => 'rw',
 	required => 1,
 );
@@ -38,7 +38,7 @@ method packages( CodeRef :$filter? ) {
 				next if $filter->( $_, $d );
 			}
 			next if !-d $d;
-			return Gentoo::Package->new(
+			return Gentoo::Repository::Package->new(
 				category     => $self,
 				package_name => $self->remove_base($d)
 			);
