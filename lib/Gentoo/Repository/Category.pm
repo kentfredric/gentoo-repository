@@ -2,50 +2,51 @@ package Gentoo::Repository::Category;
 
 # $Id:$
 
-use Moose;
+use MooseX::Declare 0.03;
 use version; our $VERSION = qv('0.1');
-use MooseX::Method::Signatures 0.06;
 
-use Gentoo::Util::Iterator;
+use Iterator::Util;
+use Iterator::IO;
+
 use Gentoo::Repository::Package;
-use Gentoo::Repository::Types;
+use Gentoo::Util::Types;
 
-extends qw( Gentoo::Repository::Base );
+class Gentoo::Repository::Category extends Gentoo::Repository::Base {
+    has 'repository' => (
+        isa      => 'Gentoo::Repository',
+        is       => 'rw',
+        required => 1,
+    );
 
-has 'repository' => (
-	isa      => 'Gentoo::Repository',
-	is       => 'rw',
-	required => 1,
-);
+    has 'category_name' => (
+        isa      => 'Gentoo::Util::Type::CategoryAtom',
+        is       => 'rw',
+        required => 1,
+    );
 
-has 'category_name' => (
-	isa      => 'Gentoo::Repository::Type::CategoryAtom',
-	is       => 'rw',
-	required => 1,
-);
+    method url {
+        return $self->repository->url . $self->category_name . q{/};
+    };
 
-method url {
-	return $self->repository->url . $self->category_name . q{/};
+    method packages( CodeRef :$filter? ) {
+
+        my ( $it ) = idir_listing( $self->url );
+
+        $it = imap {                                        # General purpose tranformation.
+            { dir => $_ , short => $self->remove_base($_) } # See Iterator::Util
+        } $it;
+
+        if ( defined $filter ) {                            # Probably The Most Confusing Part
+            $it = igrep { $filter->($_ )}  $it;
+        }
+
+        $it = igrep{ -d $_->{dir} } $it;
+
+        $it = imap { Gentoo::Repository::Package->new(
+                    category     => $self,
+                    package_name => $_->{short}
+        ) } $it ;
+        return $it;
+    };
 };
-
-method packages( CodeRef :$filter? ) {
-	my ( $iterator, $next, @dirs ) = ( 0, undef, undef );
-	  @dirs = $self->glob_url;
-	  $next = sub {
-		while ( my $d = $dirs[ $iterator++ ] ) {
-			if ( defined $filter ) {
-				local $_ = $self->remove_base($d);
-				next if $filter->( $_, $d );
-			}
-			next if !-d $d;
-			return Gentoo::Repository::Package->new(
-				category     => $self,
-				package_name => $self->remove_base($d)
-			);
-		}
-		return;
-	  };
-	  return Gentoo::Util::Iterator->new($next);
-};
-
 1;

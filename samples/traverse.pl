@@ -4,22 +4,22 @@ use strict;
 use warnings;
 use version; our $VERSION = qv('0.1');
 
+use Iterator::Util;
+use Iterator;
+use Data::Dumper;
+
 use lib '../lib';
 
 use Gentoo::Repository;
 
-my $x = Gentoo::Repository->new( directory => '/usr/portage/' );
+my $repository = Gentoo::Repository->new( directory => '/usr/portage/' );
+my $categories = $repository->categories( filter => sub {   $_->{short} eq 'dev-perl'  });
+my $packages   = Iterator->new(sub{ Iterator::is_done(); });
 
-my @categories = $x->categories(
-    filter => sub {
-        $_ ne 'dev-perl';
-    }
-)->all;
+while( $categories->isnt_exhausted()){
+    $packages  = iappend( $packages, $categories->value->packages() );
+}
 
-for (@categories) {
-    print $_->packages->all(
-        sub {
-            $_->yaml;
-        }
-    );
+while( $packages->isnt_exhausted() ){
+    print $packages->value()->package_atom(), "\n";
 }

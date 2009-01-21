@@ -14,12 +14,15 @@ no_index:
     - inc
     - t
 requires:
+  Best: 0.11
   Gentoo::Util: 0.01
+  Iterator: 1.04
+  Iterator::IO: 0.02
+  Iterator::Util: 0.02
+  MooosX::Declare: 0.03
   Moose: 0.63
   Moose::Util::TypeConstraints: 0.63
   MooseX::Method::Signatures: 0.06
-  Readonly: 1.03
-  YAML::XS: 0.29
   perl: 5.01
   version: 0.76
 resources:
